@@ -36,40 +36,39 @@ def print_concept(c, f, excluded_concepts, recursive = true, max_level = 1000)
       end
     end
     # concept set members
-    sets = ConceptSet.find_all_by_concept_set(c.id)
-    sets.each do |s|
-      set = Concept.find(s.concept_id)
-      if !set.retired? && excluded_concepts.index(set.id) == nil
-        set_name = set.name.name[0..max_concept_length]
-        f.puts "  \"#{set_name}\" -- \"#{name}\" [color=blue];"
-        print_concept(set, f, excluded_concepts, recursive, max_level) if recursive
-      end
-    end
+#    sets = ConceptSet.find_all_by_concept_set(c.id)
+#    sets.each do |s| 
+#      if excluded_concepts.index(s.id) == nil
+#        set = Concept.find(s.concept_id)
+#        if !set.retired? && excluded_concepts.index(set.id) == nil
+#          set_name = set.name.name[0..max_concept_length]
+#          f.puts "  \"#{set_name}\" -- \"#{name}\" [color=blue];"
+#          print_concept(set, f, excluded_concepts, recursive, max_level) if recursive
+#        end
+#      end
+#    end
   end
 end
 
-f = File.open('dictionary.dot', 'w')
+f = File.open('output.dot', 'w')
 f.puts "strict graph opd {"
 f.puts "  rankdir = LR;"
 #f.puts "  rotate=90;"
 
-excluded_concepts = [6234, 6322, 6324, 6325, 6326, 6327, 6323]
+#excluded_concepts = [6234, 6322, 6324, 6325, 6326, 6327, 6323]
+excluded_concepts = [911]
 
 # graph whole dictionary
 #concepts = Concept.find(:all).each do |c|
 #  print_concept(c, f, excluded_concepts, false)
 #end
 
-# start from one concept
-#print_concept Concept.find(3065), f, excluded_concepts, true
+# start from one concept, OPD
+print_concept Concept.find(3065), f, excluded_concepts, true
 
 # start from chosen ones
-[7072, 7073, 7074, 7075, 7076, 7077, 7078, 7079, 7080, 7081, 7085].each do |c|
-  print_concept Concept.find(c), f, excluded_concepts, true, 3
-end
+#[7072, 7073, 7074, 7075, 7076, 7077, 7078, 7079, 7080, 7081, 7085].each do |c|
+#  print_concept Concept.find(c), f, excluded_concepts, true, 3
+#end
 
 f.puts "}"
-
-#/var/www/mateme_jeff/mateme/script/runner runner.rb
-# dot -Tsvg -o dictionary.svg dictionary.dot
-#ccomps -x opd | dot | gvpack -g | neato -Tsvg -n2 -s > opd.svg

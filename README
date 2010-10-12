@@ -1,1 +1,6 @@
-tbd
+Execute
+/var/www/mateme_jeff/mateme/script/runner runner.rb
+
+Create SVG
+dot -Tsvg -o dictionary.svg dictionary.dot
+ccomps -x opd | dot | gvpack -g | neato -Tsvg -n2 -s > opd.svg
