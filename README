@@ -1,6 +1,22 @@
 Execute
-/var/www/mateme_jeff/mateme/script/runner runner.rb
+/Users/xian/projects/pih/bart2/script/runner runner.rb
 
 Create SVG
-dot -Tsvg -o dictionary.svg dictionary.dot
-ccomps -x opd | dot | gvpack -g | neato -Tsvg -n2 -s > opd.svg
+dot -Tsvg -o dictionary.svg output2.dot
+ccomps -x output2.dot | dot | gvpack -g | neato -Tsvg -n2 -s > o.svg
+
+Export straight from SQL
+select "strict graph opd { \n rankdir = LR;"
+union
+select concat("  \"", cn.name, "\" -- \"", et.name, " ()\" [headhref=\"http://localhost:8080/openmrs/dictionary/concept.htm?conceptId=", o.concept_id, "\", headlabel=\"", count(*) ,"\"];") 
+from encounter e, obs o, concept_name cn, encounter_type et
+where e.encounter_id= o.encounter_id and cn.concept_id = o.concept_id and cn.locale="en" and et.encounter_type_id = e.encounter_type
+and e.voided=0 and o.voided=0 
+-- and e.encounter_type in (9, 10) 
+group by e.encounter_type, o.concept_id
+union
+select "}"
+into outfile '/tmp/out.csv'
+fields terminated by ''
+optionally enclosed by ''
+lines terminated by '';
